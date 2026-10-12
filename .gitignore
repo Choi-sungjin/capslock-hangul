@@ -9,3 +9,6 @@ linux/payload/SHA256SUMS
 user-prompt.md
 .env
 .env.*
+
+# Windows native build output
+windows/bin/
