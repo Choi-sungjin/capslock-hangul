@@ -30,8 +30,8 @@ sudo apt install git build-essential patch python3 libglib2.0-bin gsettings-desk
 ### Git으로 받기
 
 ```bash
-git clone https://github.com/Choi-sungjin/-.git capslock
-cd capslock/linux
+git clone https://github.com/Choi-sungjin/capslock-hangul.git
+cd capslock-hangul/linux
 ```
 
 `Repository not found` 또는 인증 오류가 나면 저장소 주소, 로그인 계정, 접근 권한을 확인하세요. GitHub CLI를 사용한다면 `gh auth login`과 `gh auth setup-git`으로 Git 인증을 구성할 수 있습니다(GitHub CLI 별도 설치 필요).

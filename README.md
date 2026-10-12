@@ -1,4 +1,4 @@
-# Caps Lock 한영 전환
+# CapsLock Hangul — Linux & Windows
 
 Caps Lock을 짧게 누르면 한영 전환, 길게 누르면 대문자 고정. 기존 한영키 자리는 오른쪽 Alt로 사용합니다.
 
@@ -9,13 +9,13 @@ Caps Lock을 짧게 누르면 한영 전환, 길게 누르면 대문자 고정. 
 
 ## Windows PC에서 사용하기
 
-저장소를 받은 뒤 `windows` 폴더에서 일반 PowerShell로 실행합니다.
+GitHub에 로그인한 뒤 **Code → Download ZIP**으로 내려받아 압축을 풉니다. 압축을 푼 폴더의 `windows` 폴더에서 일반 PowerShell을 열고 실행합니다.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-Windows에 포함된 .NET Framework로 빌드하고 현재 사용자에게 설치합니다. 설치 즉시 실행되며, 이후에는 재부팅 후 Windows 로그인 직후 자동 실행됩니다. WSL이나 AutoHotkey는 필요하지 않습니다.
+Windows에 포함된 .NET Framework로 빌드하고 현재 사용자에게 설치합니다. 관리자 권한은 필요하지 않습니다. 설치 즉시 실행되며, 이후에는 재부팅 후 Windows 로그인 직후 자동 실행됩니다. WSL이나 AutoHotkey는 필요하지 않습니다.
 
 [Windows 설치 안내](windows/README.md)에 키 동작, 설치 위치, 상태 확인, 제거 방법과 전용 한영키 옵션을 정리했습니다.
 

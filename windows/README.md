@@ -14,7 +14,24 @@ Linux와 사용자 동작을 맞추되 Windows에서는 한영/Caps 출력에 �
 
 ## 설치
 
-이 저장소의 `windows` 폴더에서 일반 PowerShell로 실행합니다.
+검증 환경은 **Windows 11 x64 + 한국어 Microsoft IME**입니다. Windows PowerShell 5.1과 Windows에 포함된 .NET Framework 4.x를 사용하며, 관리자 권한 없이 현재 사용자에게 설치합니다. PowerShell 7에서도 관리 스크립트 회귀검사를 통과했습니다.
+
+### 1. 소스 받기
+
+현재 저장소는 비공개이므로 접근 권한이 있는 GitHub 계정으로 로그인해야 합니다.
+
+**Git 없이 받기:** 저장소에서 **Code → Download ZIP**을 선택하고 압축을 풉니다. 압축을 푼 폴더 안의 `windows` 폴더를 파일 탐색기로 연 뒤, 주소창에 `powershell`을 입력하고 Enter를 누릅니다.
+
+Git이 설치되어 있고 GitHub 인증이 되어 있다면 다음 방법도 사용할 수 있습니다.
+
+```powershell
+git clone https://github.com/Choi-sungjin/capslock-hangul.git
+cd .\capslock-hangul\windows
+```
+
+### 2. 설치 실행
+
+위에서 연 일반 PowerShell에서 실행합니다.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
@@ -22,7 +39,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 
 빌드와 자동 검사를 먼저 수행한 뒤 다음을 설정합니다.
 
-- 실행 파일과 관리 스크립트: Windows **문서 폴더 아래 `CapsLockHangul`**. 문서 폴더는 `[Environment]::GetFolderPath('MyDocuments')`로 확인하므로 사용자 지정 위치도 반영합니다.
+- 실행 파일과 관리 스크립트: Windows **문서 폴더 아래 `CapsLockHangul`**. 문서 폴더는 `[Environment]::GetFolderPath('MyDocuments')`로 확인하므로 로컬 디스크의 사용자 지정 위치도 반영합니다. 네트워크 공유(UNC) 문서 폴더는 지원하지 않습니다.
 - 자동 시작: 현재 계정의 로그인 작업 `CapsLockHangul-<사용자 SID>`
 - 로그인 지연 없음, 배터리 사용 중에도 실행, 실행 시간 제한 없음
 - 비정상 종료 시 1분 간격으로 최대 3회 다시 시작
