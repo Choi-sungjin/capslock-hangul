@@ -1,0 +1,10 @@
+#!/bin/bash
+# Stand-in for pgrep in installer tests: FAKE_PROCS="keyd input-remapper-service ..."
+mode=$1 pat=$2
+for p in ${FAKE_PROCS:-}; do
+	case "$mode" in
+		-x) [ "$p" = "$pat" ] && exit 0 ;;
+		-f) echo "$p" | grep -Eq "$pat" && exit 0 ;;
+	esac
+done
+exit 1

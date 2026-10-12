@@ -1,0 +1,21 @@
+x down
+x up
+hangeul down
+hangeul up
+rightalt down
+rightalt up
+leftshift down
+a down
+a up
+leftshift up
+
+x down
+x up
+rightalt down
+rightalt up
+rightalt down
+rightalt up
+leftshift down
+a down
+a up
+leftshift up

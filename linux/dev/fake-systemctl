@@ -1,0 +1,63 @@
+#!/bin/bash
+# Stand-in for systemctl in installer tests. State lives under $KEYD_CAPSLOCK_ROOT.
+#   FAKE_FAIL="restart start ..."   verbs that fail
+#   FAKE_ACTIVE="keyd.service ..."  other units reported active
+# "start/restart" also runs the unit's ExecStartPre equivalent: the staged
+# binary's "check" on the staged config dir.
+set -u
+ROOT=$KEYD_CAPSLOCK_ROOT
+RUN=$ROOT/.fake-systemd
+WANTS=$ROOT/etc/systemd/system/multi-user.target.wants
+mkdir -p "$RUN"
+echo "systemctl $*" >> "$RUN/calls.log"
+
+quiet=0 now=0 args=()
+for a in "$@"; do
+	case "$a" in
+		--quiet) quiet=1 ;;
+		--now) now=1 ;;
+		*) args+=("$a") ;;
+	esac
+done
+verb=${args[0]:-}
+unit=${args[1]:-}
+
+for f in ${FAKE_FAIL:-}; do
+	if [ "$f" = "$verb" ]; then
+		echo "fake-systemctl: $verb $unit failed" >&2
+		rm -f "$RUN/active.$unit"
+		exit 1
+	fi
+done
+
+start() {
+	local bin=$ROOT/usr/local/bin/keyd-capslock
+	[ -f "$ROOT/etc/systemd/system/$unit" ] || { echo "Unit $unit not found." >&2; exit 5; }
+	[ -x "$bin" ] || { echo "fake-systemctl: $bin missing" >&2; exit 1; }
+	"$bin" check "$ROOT"/etc/keyd-capslock/*.conf >/dev/null || { echo "fake-systemctl: ExecStartPre check failed" >&2; exit 1; }
+	touch "$RUN/active.$unit"
+}
+
+case "$verb" in
+	daemon-reload|reset-failed) ;;
+	is-active)
+		for u in ${FAKE_ACTIVE:-}; do [ "$u" = "$unit" ] && exit 0; done
+		[ -e "$RUN/active.$unit" ] || { [ $quiet = 1 ] || echo inactive; exit 3; }
+		[ $quiet = 1 ] || echo active ;;
+	is-enabled)
+		[ -L "$WANTS/$unit" ] || { [ $quiet = 1 ] || echo disabled; exit 1; }
+		[ $quiet = 1 ] || echo enabled ;;
+	enable)
+		[ -f "$ROOT/etc/systemd/system/$unit" ] || { echo "Unit $unit not found." >&2; exit 1; }
+		mkdir -p "$WANTS"
+		ln -sfn "/etc/systemd/system/$unit" "$WANTS/$unit"
+		[ $now = 1 ] && start ;;
+	disable)
+		[ $now = 1 ] && rm -f "$RUN/active.$unit"
+		rm -f "$WANTS/$unit"
+		rmdir "$WANTS" 2>/dev/null || true ;;
+	start|restart) start ;;
+	stop) rm -f "$RUN/active.$unit" ;;
+	*) echo "fake-systemctl: unsupported $verb" >&2; exit 1 ;;
+esac
+exit 0

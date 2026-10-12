@@ -1,0 +1,22 @@
+[Unit]
+Description=keyd-capslock: Caps Lock tap = Hangul, hold = Caps Lock
+# Ready before the login screen. keyd watches /dev/input itself, so
+# keyboards that appear later (USB/Bluetooth hotplug) are picked up.
+Before=display-manager.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=NO_COLOR=1
+# Refuse to start on an invalid config instead of running unmapped.
+ExecStartPre=/usr/local/bin/keyd-capslock check
+ExecStart=/usr/local/bin/keyd-capslock
+Restart=on-failure
+RestartSec=2
+# Holds the IPC socket (compiled in as /run/keyd-capslock/keyd.socket).
+RuntimeDirectory=keyd-capslock
+RuntimeDirectoryMode=0750
+
+[Install]
+WantedBy=multi-user.target
