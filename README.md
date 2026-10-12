@@ -7,6 +7,14 @@ Caps Lock을 짧게 누르면 한영 전환, 길게 누르면 대문자 고정. 
 | [Linux](linux/README.md) | 구현 및 Ubuntu 24.04 GNOME X11 / IBus 한글 환경에서 설치·재부팅 검증 |
 | [Windows](windows/README.md) | 개발 예정, 아직 구현·검증하지 않음 |
 
+## 다른 Linux PC에서 사용하기
+
+**소스를 받은 뒤 그 PC에서 빌드·설치해야 합니다.** 압축 해제만으로 바로 실행되는 배포 파일은 아닙니다. 설치하면 부팅 자동 시작도 등록됩니다.
+
+검증된 환경은 **Ubuntu 24.04 + GNOME X11 + IBus 한글**입니다. 다른 배포판, KDE, Wayland, Fcitx 조합은 추가 확인이 필요합니다. 현재 저장소가 비공개이므로 내려받을 계정에 접근 권한이 있어야 합니다.
+
+[Linux 설치 안내](linux/README.md)에 패키지 준비, Git/ZIP 다운로드, 빌드·설치, 재부팅 확인, 제거·복원 순서를 정리했습니다.
+
 ## 공통 동작
 
 - Caps Lock 단독 입력: 300ms 미만이면 한영 전환, 300ms 이상이면 Caps Lock 켜기/끄기.
