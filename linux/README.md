@@ -1,22 +1,62 @@
 # Linux 설치 및 검증
 
-## 확인된 환경
+## 지원 범위
 
-Ubuntu 24.04, GNOME X11, IBus 한글 입력기. 실제 설치와 사용자 입력, 재부팅 후 자동 시작 및 설정 유지를 확인했습니다. 다른 배포판·Wayland·입력기 조합은 이 저장소에서 검증하지 않았습니다.
+| 환경 | 확인 상태 |
+| --- | --- |
+| Ubuntu 24.04 + GNOME X11 + IBus 한글 | 설치·사용자 입력·재부팅 자동 시작 및 설정 유지 확인 |
+| 다른 배포판, GNOME Wayland, 다른 CPU 아키텍처 | 아직 검증하지 않음. 패키지 이름과 동작을 별도로 확인해야 함 |
+| KDE, Fcitx 등 다른 데스크톱/입력기 | 제공된 사용자 설정 스크립트의 대상이 아님. 해당 환경용 설정 작업 필요 |
 
-## 준비 및 빌드
+시스템 서비스 설치는 systemd와 Linux 입력 장치를 전제로 합니다. 일반 컨테이너나 WSL을 실제 Linux 데스크톱과 같은 지원 환경으로 보지 않습니다.
 
-Ubuntu 기준 빌드 도구는 `git`, `build-essential`, `patch`가 필요합니다. 설치 스크립트는 systemd를 전제로 합니다. 데스크톱 설정에는 GNOME과 `ibus-hangul`, Python 3, gsettings가 필요합니다.
+**ZIP을 풀기만 하면 실행되는 형태가 아닙니다.** 실행 파일은 저장소에 포함하지 않으며 설치할 PC에서 빌드합니다. 관리자 권한은 패키지 설치와 시스템 서비스 설치에 필요하고, 빌드 및 사용자 설정은 일반 사용자로 실행합니다.
+
+## 1. Ubuntu 패키지와 입력기 준비
+
+다음은 검증 환경인 Ubuntu 24.04 GNOME 기준입니다. 다른 배포판에 그대로 복사해 실행하지 마세요.
+
+```bash
+sudo apt update
+sudo apt install git build-essential patch python3 libglib2.0-bin gsettings-desktop-schemas ibus-hangul
+```
+
+설정 → 키보드에서 한국어 **Hangul(IBus)** 입력 소스를 추가하고, 원래 한영 전환으로 한글이 입력되는지 먼저 확인하세요. 이 도구는 키 입력을 바꾸는 도구이며 한글 입력기 선택까지 자동으로 설정하지 않습니다.
+
+## 2. 소스 받기
+
+현재 저장소는 **비공개**입니다. 권한 있는 GitHub 계정으로 인증해야 하며 URL만 전달받은 계정은 받을 수 없습니다. HTTPS Git 인증에 사용할 계정의 접근 권한을 먼저 확인하세요. 비밀번호나 토큰을 명령줄 URL에 직접 넣지 마세요.
+
+### Git으로 받기
 
 ```bash
 git clone https://github.com/Choi-sungjin/-.git capslock
 cd capslock/linux
+```
+
+`Repository not found` 또는 인증 오류가 나면 저장소 주소, 로그인 계정, 접근 권한을 확인하세요. GitHub CLI를 사용한다면 `gh auth login`과 `gh auth setup-git`으로 Git 인증을 구성할 수 있습니다(GitHub CLI 별도 설치 필요).
+
+### ZIP으로 받기
+
+권한 있는 계정으로 GitHub 저장소에 로그인한 뒤 **Code → Download ZIP**으로 내려받아 압축을 풉니다. 압축을 푼 폴더 안의 `linux` 폴더에서 터미널을 열고 다음을 실행하세요. ZIP을 받아도 빌드 단계에서 원본 keyd 소스를 받으므로 Git과 인터넷 연결이 필요합니다.
+
+```bash
+chmod +x install.sh uninstall.sh dev/*.sh dev/fake-* dev/gsettings-isolated user-settings/*.sh
+```
+
+두 다운로드 방법 모두 아래 빌드 단계부터 동일합니다.
+
+## 3. 빌드
+
+`linux` 폴더에서 실행합니다. 최초 빌드는 인터넷 연결이 필요합니다.
+
+```bash
 ./dev/build-payload.sh
 ```
 
 빌드는 keyd v2.6.0을 `.work/keyd`에 내려받고, 커밋 `7c0aecb8bfd34dc8642bf4eefd2e59c89e61cec3`과 일치하는지 확인한 뒤 패치를 적용합니다. 결과는 `payload/`에 생성됩니다. `WORK`는 임시 작업 디렉터리, `KEYD_GIT`는 이미 받은 keyd 저장소 경로로 지정할 수 있습니다. 실행 파일은 설치할 PC에서 빌드하세요.
 
-## 설치
+## 4. 설치
 
 ```bash
 sudo ./install.sh --check
@@ -35,13 +75,17 @@ sudo ./install.sh
 
 적용 직후 반영되지 않는 앱은 로그아웃 후 다시 로그인하세요. 이후 실행은 이 저장소 폴더에 의존하지 않습니다. 사용자 설정은 로그인한 계정에 적용되며 로그인 화면의 입력기 설정은 별개입니다.
 
+## 5. 현재 상태와 재부팅 후 확인
+
 ```bash
 systemctl is-active keyd-capslock.service   # active
 systemctl is-enabled keyd-capslock.service # enabled
 journalctl -b -u keyd-capslock.service
 ```
 
-Caps Lock 짧게/길게, 기존 한영키 위치, Alt+문자 단축키를 확인하고 재부팅 후에도 다시 확인하세요. USB/Bluetooth 재연결과 모든 앱 조합은 별도 실제 시험이 필요합니다.
+설치 후 별도로 프로그램을 실행할 필요는 없습니다. 부팅 자동 시작은 시스템 서비스로 등록되고 사용자 설정은 계정에 저장됩니다.
+
+Caps Lock 짧게/길게, 기존 한영키 위치, Alt+문자 단축키를 확인하세요. 작업을 저장하고 직접 재부팅한 뒤 위 명령의 `active`/`enabled`와 실제 키 동작을 다시 확인하세요. USB/Bluetooth 재연결과 모든 앱 조합은 별도 실제 시험이 필요합니다.
 
 ## 동작과 주의점
 
