@@ -1,0 +1,11 @@
+# Local build products, diagnostics and user data
+**/.work/
+**/logs/
+**/evidence/
+**/backup/
+**/__pycache__/
+linux/payload/usr/
+linux/payload/SHA256SUMS
+user-prompt.md
+.env
+.env.*

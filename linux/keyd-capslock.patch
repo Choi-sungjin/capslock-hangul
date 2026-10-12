@@ -1,0 +1,100 @@
+keyd-capslock.patch - against keyd v2.6.0 (7c0aecb). keyd is MIT licensed (see LICENSE-keyd);
+this patch is provided under the same license.
+Adds global option timeout_instant_tap (default 0 = unchanged upstream behaviour).
+Apply in a v2.6.0 tree: patch -p1 < keyd-capslock.patch
+
+diff --git a/docs/keyd.scdoc b/docs/keyd.scdoc
+index d48439a..0fd6215 100644
+--- a/docs/keyd.scdoc
++++ b/docs/keyd.scdoc
+@@ -593,6 +593,13 @@ any of the following options:
+ 	overloaded key if it is held for the given number of miliseconds.
+ 	(default: 0).
+ 
++	*timeout_instant_tap:* If set, a key bound directly to *timeout()*
++	which is released in the same millisecond it was pressed immediately
++	executes <action 1>, instead of waiting for the next event or the
++	timeout. Timeouts activated by other actions (nested *timeout()*,
++	*overload*) are unaffected.
++	(default: 0)
++
+ 
+ *Note:* Unicode characters and key sequences are treated as macros, and
+ are consequently affected by the corresponding timeout options.
+diff --git a/src/config.c b/src/config.c
+index 3557fb0..07487ba 100644
+--- a/src/config.c
++++ b/src/config.c
+@@ -840,6 +840,8 @@ static void parse_global_section(struct config *config, struct ini_section *sect
+ 			config->layer_indicator = atoi(ent->val);
+ 		else if (!strcmp(ent->key, "overload_tap_timeout"))
+ 			config->overload_tap_timeout = atoi(ent->val);
++		else if (!strcmp(ent->key, "timeout_instant_tap"))
++			config->timeout_instant_tap = atoi(ent->val);
+ 		else
+ 			config_warn("%s is not a valid global option", ent->key);
+ 	}
+diff --git a/src/config.h b/src/config.h
+index f09f800..c70d53f 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -145,6 +145,8 @@ struct config {
+ 
+ 	long overload_tap_timeout;
+ 
++	uint8_t timeout_instant_tap;
++
+ 	long chord_interkey_timeout;
+ 	long chord_hold_timeout;
+ 
+diff --git a/src/keyboard.c b/src/keyboard.c
+index 97797c3..de622f3 100644
+--- a/src/keyboard.c
++++ b/src/keyboard.c
+@@ -769,6 +769,7 @@ static long process_descriptor(struct keyboard *kbd, uint8_t code,
+ 
+ 			pt->activation_time = time;
+ 			pt->spontaneous = 0;
++			pt->direct = 0;
+ 
+ 			schedule_timeout(kbd, pt->expiration);
+ 		} else if (time == kbd->pending_timeout.activation_time) {
+@@ -1078,7 +1079,14 @@ int handle_pending_timeout(struct keyboard *kbd, uint8_t event_code, int pressed
+ {
+ 	struct pending_timeout pt = kbd->pending_timeout;
+ 
+-	if (!pt.code || (!pressed && pt.code == event_code && time == pt.activation_time))
++	/*
++	 * A release in the same tick as the activation normally defers
++	 * resolution. With timeout_instant_tap, a timeout() bound directly to
++	 * the key falls through and resolves to action1 like any other release
++	 * before the timeout.
++	 */
++	if (!pt.code || (!(kbd->config.timeout_instant_tap && pt.direct) &&
++			 !pressed && pt.code == event_code && time == pt.activation_time))
+ 		return 0;
+ 
+ 	if (pt.spontaneous) {
+@@ -1243,6 +1251,10 @@ static long process_event(struct keyboard *kbd, uint8_t code, int pressed, long
+ 		}
+ 
+ 		process_descriptor(kbd, code, &d, dl, pressed, time);
++
++		/* The pending timeout was activated by this key's own press. */
++		if (pressed && d.op == OP_TIMEOUT)
++			kbd->pending_timeout.direct = 1;
+ 	}
+ 
+ 
+diff --git a/src/keyboard.h b/src/keyboard.h
+index ed1b200..0aa3628 100644
+--- a/src/keyboard.h
++++ b/src/keyboard.h
+@@ -98,6 +98,7 @@ struct keyboard {
+ 		uint8_t code;
+ 		uint8_t dl;
+ 		uint8_t spontaneous;
++		uint8_t direct;
+ 
+ 		long expiration;
+ 		long activation_time;

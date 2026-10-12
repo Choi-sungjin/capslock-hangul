@@ -1,0 +1,11 @@
+#!/bin/bash
+# Real gsettings on an isolated keyfile backend under $ISOLATED_GSETTINGS_DIR
+# (never the user's dconf). FAIL_SET_KEY=<key> makes "set ... <key>" fail.
+set -u
+[ -n "${ISOLATED_GSETTINGS_DIR:-}" ] || { echo "gsettings-isolated: ISOLATED_GSETTINGS_DIR not set" >&2; exit 99; }
+if [ "${1:-}" = set ] && [ -n "${FAIL_SET_KEY:-}" ] && [ "${3:-}" = "$FAIL_SET_KEY" ]; then
+	echo "gsettings-isolated: injected failure for set $2 $3" >&2
+	exit 1
+fi
+echo "gsettings $*" >> "$ISOLATED_GSETTINGS_DIR/calls.log"
+GSETTINGS_BACKEND=keyfile XDG_CONFIG_HOME=$ISOLATED_GSETTINGS_DIR exec /usr/bin/gsettings "$@"
