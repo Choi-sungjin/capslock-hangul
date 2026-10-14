@@ -9,7 +9,7 @@ Caps Lock을 짧게 누르면 한영 전환, 길게 누르면 대문자 고정. 
 
 ## Windows PC에서 사용하기
 
-GitHub에 로그인한 뒤 **Code → Download ZIP**으로 내려받아 압축을 풉니다. 압축을 푼 폴더의 `windows` 폴더에서 일반 PowerShell을 열고 실행합니다.
+저장소에서 **Code → Download ZIP**으로 내려받아 압축을 풉니다. 압축을 푼 폴더의 `windows` 폴더에서 일반 PowerShell을 열고 실행합니다.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
@@ -23,7 +23,7 @@ Windows에 포함된 .NET Framework로 빌드하고 현재 사용자에게 설�
 
 **소스를 받은 뒤 그 PC에서 빌드·설치해야 합니다.** 압축 해제만으로 바로 실행되는 배포 파일은 아닙니다. 설치하면 부팅 자동 시작도 등록됩니다.
 
-검증된 환경은 **Ubuntu 24.04 + GNOME X11 + IBus 한글**입니다. 다른 배포판, KDE, Wayland, Fcitx 조합은 추가 확인이 필요합니다. 현재 저장소가 비공개이므로 내려받을 계정에 접근 권한이 있어야 합니다.
+검증된 환경은 **Ubuntu 24.04 + GNOME X11 + IBus 한글**입니다. 다른 배포판, KDE, Wayland, Fcitx 조합은 추가 확인이 필요합니다.
 
 [Linux 설치 안내](linux/README.md)에 패키지 준비, Git/ZIP 다운로드, 빌드·설치, 재부팅 확인, 제거·복원 순서를 정리했습니다.
 

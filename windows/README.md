@@ -18,11 +18,9 @@ Linux와 사용자 동작을 맞추되 Windows에서는 한영/Caps 출력에 �
 
 ### 1. 소스 받기
 
-현재 저장소는 비공개이므로 접근 권한이 있는 GitHub 계정으로 로그인해야 합니다.
-
 **Git 없이 받기:** 저장소에서 **Code → Download ZIP**을 선택하고 압축을 풉니다. 압축을 푼 폴더 안의 `windows` 폴더를 파일 탐색기로 연 뒤, 주소창에 `powershell`을 입력하고 Enter를 누릅니다.
 
-Git이 설치되어 있고 GitHub 인증이 되어 있다면 다음 방법도 사용할 수 있습니다.
+Git이 설치되어 있다면 다음 방법도 사용할 수 있습니다.
 
 ```powershell
 git clone https://github.com/Choi-sungjin/capslock-hangul.git

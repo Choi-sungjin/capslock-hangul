@@ -25,8 +25,6 @@ sudo apt install git build-essential patch python3 libglib2.0-bin gsettings-desk
 
 ## 2. 소스 받기
 
-현재 저장소는 **비공개**입니다. 권한 있는 GitHub 계정으로 인증해야 하며 URL만 전달받은 계정은 받을 수 없습니다. HTTPS Git 인증에 사용할 계정의 접근 권한을 먼저 확인하세요. 비밀번호나 토큰을 명령줄 URL에 직접 넣지 마세요.
-
 ### Git으로 받기
 
 ```bash
@@ -34,11 +32,9 @@ git clone https://github.com/Choi-sungjin/capslock-hangul.git
 cd capslock-hangul/linux
 ```
 
-`Repository not found` 또는 인증 오류가 나면 저장소 주소, 로그인 계정, 접근 권한을 확인하세요. GitHub CLI를 사용한다면 `gh auth login`과 `gh auth setup-git`으로 Git 인증을 구성할 수 있습니다(GitHub CLI 별도 설치 필요).
-
 ### ZIP으로 받기
 
-권한 있는 계정으로 GitHub 저장소에 로그인한 뒤 **Code → Download ZIP**으로 내려받아 압축을 풉니다. 압축을 푼 폴더 안의 `linux` 폴더에서 터미널을 열고 다음을 실행하세요. ZIP을 받아도 빌드 단계에서 원본 keyd 소스를 받으므로 Git과 인터넷 연결이 필요합니다.
+GitHub 저장소에서 **Code → Download ZIP**으로 내려받아 압축을 풉니다. 압축을 푼 폴더 안의 `linux` 폴더에서 터미널을 열고 다음을 실행하세요. ZIP을 받아도 빌드 단계에서 원본 keyd 소스를 받으므로 Git과 인터넷 연결이 필요합니다.
 
 ```bash
 chmod +x install.sh uninstall.sh dev/*.sh dev/fake-* dev/gsettings-isolated user-settings/*.sh
